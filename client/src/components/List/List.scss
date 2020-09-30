@@ -1,0 +1,21 @@
+.list-container {
+    width: 30%;
+    margin: 0.5rem;
+    padding: 0.5rem 1rem 1.5rem;
+    background-color: rgba(235, 236, 240, 0.6);
+    border-radius: 3px;
+
+    .task-list {
+        width: 100%;
+        min-height: 1px;
+        max-height: 400px;
+        overflow-y: scroll;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .list-container {
+        width: 90%;
+        margin: 0.5rem auto;
+    }
+}

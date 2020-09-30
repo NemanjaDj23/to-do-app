@@ -1,0 +1,86 @@
+# version: "3.7"
+# services:
+#     app:
+#         build:
+#             context: .
+#             dockerfile: .docker/Dockerfile
+#         image: "laravelapp"
+#         ports:
+#             - 8080:80
+#         volumes:
+#             - ./:/var/www/html
+
+#     db:
+#         image: mysql:5.7
+#         restart: always
+#         ports:
+#             - "3306:3306"
+#         environment:
+#             MYSQL_DATABASE: "to_do_app"
+#             MYSQL_ROOT_PASSWORD: "root"
+#         volumes:
+#             - ./db:/var/lib/mysql
+
+version: '3'
+services:
+
+  #Laravel App
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel/laravel
+    container_name: server
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: server
+      SERVICE_TAGS: dev
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - mynet
+
+  #Nginx Service
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./:/var/www/html
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/ssl/:/etc/nginx/ssl/
+    networks:
+      - mynet
+
+  #MySQL Service
+  db:
+    image: mysql:5.7
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: to_do_app
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysqldata:/var/lib/mysql/
+    networks:
+      - mynet
+
+#Docker Networks
+networks:
+  mynet:
+    driver: bridge
+#Volumes
+volumes:
+  mysqldata:
+    driver: local
